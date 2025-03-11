@@ -1,0 +1,26 @@
+name: Update Random Text
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Exécute toutes les 12 heures
+  workflow_dispatch:  # Permet aussi de lancer l'action manuellement
+
+jobs:
+  update-text:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt
+        uses: actions/checkout@v3
+
+      - name: Générer un texte aléatoire
+        run: |
+          echo "$(cat /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 12)" > random_text.txt
+          cat random_text.txt  # Affiche le texte généré dans la console
+
+      - name: Valider et pousser les modifications
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "github-action@users.noreply.github.com"
+          git add random_text.txt
+          git commit -m "Mise à jour automatique du texte aléatoire"
+          git push
